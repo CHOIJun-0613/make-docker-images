@@ -73,3 +73,4 @@ RUN bash -c '\
 # 필요한 파일 복사 (선택 사항)
 # COPY --chown=$DEV_USER:$DEV_USER your_application /app/
 
+CMD ["java", "-version"] 
