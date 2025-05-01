@@ -3,11 +3,10 @@
 # 베이스 이미지 설정
 FROM mysql:8.0
  
-# 환경 변수 설정 (필요에 따라 수정)
-ENV MYSQL_ROOT_PASSWORD=#skcc06433
-ENV MYSQL_DATABASE=mysql
-ENV MYSQL_USER=mysqluser
-ENV MYSQL_PASSWORD=#skcc06433 
+# 환경 변수 설정 (비밀번호는 컨테이너 실행 시 주입하는 것을 권장)
+# ENV MYSQL_ROOT_PASSWORD=your_root_password_here # 실행 시 환경 변수로 전달 권장
+ENV MYSQL_DATABASE=devdb 
+ENV MYSQL_USER=devuser
 
 # 포트 노출
 EXPOSE 3306
@@ -23,9 +22,5 @@ VOLUME /var/lib/mysql
 # COPY ./init.sql /docker-entrypoint-initdb.d/
 # COPY ./my_custom_script.sh /docker-entrypoint-initdb.d/
 
-# healthcheck 설정 (선택 사항)
-HEALTHCHECK --timeout=5s --interval=5s --retries=5 \
-  CMD mysqladmin ping -h localhost -u root -p"$MYSQL_ROOT_PASSWORD"
-
-# 컨테이너 시작 시 실행될 명령어 (기본 MySQL 실행)
-CMD ["mysqld"]
+# HEALTHCHECK: 베이스 이미지에 포함된 기본 healthcheck 사용 권장
+# CMD: 베이스 이미지의 기본 CMD ["mysqld"] 사용
