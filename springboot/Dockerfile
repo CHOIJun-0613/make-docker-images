@@ -47,7 +47,7 @@ RUN apt-get update && \
 
 # dev 사용자로 전환
 USER $DEV_USER
-WORKDIR /home/$DEV_USER
+WORKDIR /home/$DEV_USER/workspace
 
 RUN bash -c '\
     set -e && \
@@ -73,4 +73,4 @@ RUN bash -c '\
 # 필요한 파일 복사 (선택 사항)
 # COPY --chown=$DEV_USER:$DEV_USER your_application /app/
 
-CMD ["java", "-version"] 
+CMD ["sdk", "current"] 
