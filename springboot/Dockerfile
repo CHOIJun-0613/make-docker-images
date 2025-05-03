@@ -10,8 +10,8 @@ ENV LANGUAGE=ko_KR:ko
 ENV LC_ALL=ko_KR.UTF-8
 # SDKMAN 설치 경로 환경 변수 (선택 사항이지만 명시하면 좋음)
 ENV SDKMAN_DIR="/home/${DEV_USER}/.sdkman"
-# PATH에 SDKMAN bin 경로 추가 (Java, Gradle 등 실행 파일 경로 자동 설정)
-ENV PATH="${SDKMAN_DIR}/candidates/java/current/bin:${SDKMAN_DIR}/candidates/gradle/current/bin:${PATH}"
+#PATH에 SDKMAN bin 및 설치된 후보(java, gradle) 경로 추가
+ENV PATH="${SDKMAN_DIR}/bin:${SDKMAN_DIR}/candidates/java/current/bin:${SDKMAN_DIR}/candidates/gradle/current/bin:${PATH}"
 
 # dev 그룹 및 사용자 생성
 RUN groupadd $DEV_USER && \
@@ -73,4 +73,4 @@ RUN bash -c '\
 # 필요한 파일 복사 (선택 사항)
 # COPY --chown=$DEV_USER:$DEV_USER your_application /app/
 
-CMD ["sdk", "current"] 
+#CMD ["sdk", "current"] 
