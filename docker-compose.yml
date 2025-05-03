@@ -1,0 +1,54 @@
+version: '3.8' # Docker Compose 파일 버전 명시
+
+services:
+  # Spring Boot 개발 환경 컨테이너 서비스
+  springboot-dev:
+    # 컨테이너 이름 설정
+    container_name: springboot-dev-container
+    # 빌드 컨텍스트 및 Dockerfile 경로 지정
+    build:
+      context: ./springboot
+      dockerfile: Dockerfile
+    # 포트 매핑 (호스트:컨테이너)
+    ports:
+      - "8080:8080" # Spring Boot 애플리케이션 포트
+    # 작업 디렉토리 마운트 (소스 코드 변경 실시간 반영)
+    # 호스트의 ./springboot/workspace 를 컨테이너의 /home/dev/workspace 로 연결
+    # 실제 프로젝트 경로에 맞게 수정해주세요.
+    volumes:
+      - ./springboot/workspace:/home/dev/workspace
+    # MySQL 서비스가 시작된 후에 이 서비스가 시작되도록 의존성 설정
+    depends_on:
+      - mysql-db
+    # 애플리케이션이 MySQL에 연결하기 위한 환경 변수 설정
+    environment:
+      # 서비스 이름(mysql)을 호스트 이름으로 사용
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    # 컨테이너가 종료되지 않도록 유지 (개발 중 디버깅 등에 유용)
+    # 실제 애플리케이션 실행 명령어로 변경 필요 시 수정
+    tty: true
+    stdin_open: true
+
+  # MySQL 데이터베이스 서비스
+  mysql-db:
+    container_name: mysql-db-container
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    ports:
+      - "3306:3306" # MySQL 포트
+    environment:
+      # .env 파일 또는 환경 변수에서 값을 가져옵니다.
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      # MySQL 데이터 영구 저장을 위한 볼륨 설정
+      - mysql_data:/var/lib/mysql
+
+# 데이터 영구 저장을 위한 명명된 볼륨 정의
+volumes:
+  mysql_data:
