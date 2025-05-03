@@ -1,4 +1,5 @@
-
+# 1. 사용자 정의 네트워크 생성
+docker network create my-dev-network
 
 docker build --no-cache -t dev-mysql-db:latest .
 
