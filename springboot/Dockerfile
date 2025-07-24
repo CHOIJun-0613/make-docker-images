@@ -56,12 +56,12 @@ RUN bash -c '\
     source "${SDKMAN_DIR}/bin/sdkman-init.sh" && \
     echo ">>> Configuring SDKMAN..." && \
     echo "sdkman_auto_answer=true" > "${SDKMAN_DIR}/etc/config" && \
-    echo ">>> Installing Java 23-open..." && \
-    sdk install java 23-open && \
+    echo ">>> Installing Java 21.0.7-tem..." && \
+    sdk install java 21.0.7-tem && \
     echo ">>> Installing Gradle 8.14..." && \
     sdk install gradle 8.14 && \
     echo ">>> Setting default versions..." && \
-    sdk default java 23-open && \
+    sdk default java 21.0.7-tem && \
     sdk default gradle 8.14 && \
     echo ">>> Cleaning SDKMAN caches..." && \
     sdk flush archives && \
