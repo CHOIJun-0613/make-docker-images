@@ -17,15 +17,20 @@ services:
     # 실제 프로젝트 경로에 맞게 수정해주세요.
     volumes:
       - ./springboot/workspace:/home/dev/workspace
-    # MySQL 서비스가 시작된 후에 이 서비스가 시작되도록 의존성 설정
+    # 데이터베이스 서비스들이 시작된 후에 이 서비스가 시작되도록 의존성 설정
     depends_on:
       - mysql-db
-    # 애플리케이션이 MySQL에 연결하기 위한 환경 변수 설정
+      - postgres-db
+    # 애플리케이션이 데이터베이스에 연결하기 위한 환경 변수 설정
     environment:
-      # 서비스 이름(mysql)을 호스트 이름으로 사용
+      # MySQL 연결 정보
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      # PostgreSQL 연결 정보 (Spring Boot는 프로필 등을 통해 둘 중 하나를 선택하여 사용)
+      SPRING_DATASOURCE_PG_URL: jdbc:postgresql://postgres-db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_PG_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PG_PASSWORD: ${POSTGRES_PASSWORD}
     # 컨테이너가 종료되지 않도록 유지 (개발 중 디버깅 등에 유용)
     # 실제 애플리케이션 실행 명령어로 변경 필요 시 수정
     tty: true
@@ -49,6 +54,27 @@ services:
       # MySQL 데이터 영구 저장을 위한 볼륨 설정
       - mysql_data:/var/lib/mysql
 
+  # PostgreSQL 데이터베이스 서비스
+  postgres-db:
+    container_name: postgres-db-container
+    build:
+      context: ./postgresql
+      dockerfile: Dockerfile
+      args:
+        POSTGRES_DB_ARG: ${POSTGRES_DB}
+        POSTGRES_USER_ARG: ${POSTGRES_USER}
+        POSTGRES_PASSWORD_ARG: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432" # PostgreSQL 포트
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      # PostgreSQL 데이터 영구 저장을 위한 볼륨 설정
+      - postgres_data:/var/lib/postgresql/data
+
 # 데이터 영구 저장을 위한 명명된 볼륨 정의
 volumes:
   mysql_data:
+  postgres_data:
