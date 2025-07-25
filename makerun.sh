@@ -46,3 +46,24 @@ echo "--- 중지된 컨테이너 제거 ---"
 echo "docker-compose rm           # 중지된 컨테이너 제거"
 echo ""
 echo "======================================="
+
+# Docker 이미지 빌드 및 실행 스크립트
+
+# 빌드할 Dockerfile 경로
+DOCKERFILE_DIR="java-env"
+IMAGE_NAME="java-env:latest"
+CONTAINER_NAME="java-env-container"
+
+# 이미지 빌드
+echo "=== Docker 이미지 빌드 시작 ==="
+docker build -t $IMAGE_NAME $DOCKERFILE_DIR
+
+# 기존 컨테이너가 있으면 삭제
+if [ "$(docker ps -aq -f name=$CONTAINER_NAME)" ]; then
+    echo "=== 기존 컨테이너 삭제 ==="
+    docker rm -f $CONTAINER_NAME
+fi
+
+# 컨테이너 실행 (bash로 진입)
+echo "=== 컨테이너 실행 ==="
+docker run --name $CONTAINER_NAME -it $IMAGE_NAME bash
