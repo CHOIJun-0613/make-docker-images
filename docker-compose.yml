@@ -21,6 +21,7 @@ services:
     depends_on:
       - mysql-db
       - postgres-db
+      - oracle-db
     # 애플리케이션이 데이터베이스에 연결하기 위한 환경 변수 설정
     environment:
       # MySQL 연결 정보
@@ -31,6 +32,11 @@ services:
       SPRING_DATASOURCE_PG_URL: jdbc:postgresql://postgres-db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_PG_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PG_PASSWORD: ${POSTGRES_PASSWORD}
+      # Oracle 연결 정보 (Spring Boot는 프로필 등을 통해 DB 선택)
+      # Oracle XE의 기본 SID는 'XE' 입니다.
+      SPRING_DATASOURCE_ORACLE_URL: jdbc:oracle:thin:@oracle-db:1521:XE
+      SPRING_DATASOURCE_ORACLE_USERNAME: ${ORACLE_USER}
+      SPRING_DATASOURCE_ORACLE_PASSWORD: ${ORACLE_PASSWORD}
     # 컨테이너가 종료되지 않도록 유지 (개발 중 디버깅 등에 유용)
     # 실제 애플리케이션 실행 명령어로 변경 필요 시 수정
     tty: true
@@ -74,7 +80,27 @@ services:
       # PostgreSQL 데이터 영구 저장을 위한 볼륨 설정
       - postgres_data:/var/lib/postgresql/data
 
+  # Oracle 데이터베이스 서비스
+  oracle-db:
+    container_name: oracle-db-container
+    build:
+      context: ./oracle
+      dockerfile: Dockerfile
+    ports:
+      - "1521:1521" # Oracle 포트
+    environment:
+      # .env 파일에서 값을 가져옵니다.
+      # SYS, SYSTEM 사용자의 비밀번호. gvenzl/oracle-xe 이미지는 이 변수를 사용합니다.
+      ORACLE_PASSWORD: ${ORACLE_ROOT_PASSWORD}
+      # 애플리케이션에서 사용할 사용자 및 비밀번호. gvenzl/oracle-xe 이미지가 자동으로 생성해줍니다.
+      APP_USER: ${ORACLE_USER}
+      APP_USER_PASSWORD: ${ORACLE_PASSWORD}
+    volumes:
+      # Oracle 데이터 영구 저장을 위한 볼륨 설정
+      - oracle_data:/opt/oracle/oradata
+
 # 데이터 영구 저장을 위한 명명된 볼륨 정의
 volumes:
   mysql_data:
   postgres_data:
+  oracle_data:
