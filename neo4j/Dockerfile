@@ -1,7 +1,7 @@
 # Dockerfile for Neo4j 5.x
 
 # Set the base image - Neo4j 5.x
-FROM neo4j:5
+FROM neo4j:5-community
 
 # 기본 데이터베이스를 csadb01로 설정
 ENV NEO4J_initial_dbms_default__database=csadb01

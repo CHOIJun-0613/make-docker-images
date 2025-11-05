@@ -9,8 +9,8 @@
 set -e
 
 # 변수 설정
-CONTAINER_NAME="neo4j-standalone"
-IMAGE_NAME="neo4j-custom:5"
+CONTAINER_NAME="neo4j-db"
+IMAGE_NAME="neo4j:5-community"
 NETWORK_NAME="neo4j-network"
 VOLUME_DATA="neo4j_data"
 VOLUME_LOGS="neo4j_logs"
@@ -47,10 +47,10 @@ if [ "$(docker ps -aq -f name=${CONTAINER_NAME})" ]; then
 fi
 
 # 2. 기존 이미지 제거 (선택사항 - 캐시를 사용하려면 주석 처리)
-# if [ "$(docker images -q ${IMAGE_NAME})" ]; then
-#     echo "Removing existing image: ${IMAGE_NAME}..."
-#     docker rmi ${IMAGE_NAME}
-# fi
+if [ "$(docker images -q ${IMAGE_NAME})" ]; then
+    echo "Removing existing image: ${IMAGE_NAME}..."
+    docker rmi ${IMAGE_NAME}
+fi
 
 # 3. 네트워크 생성 (존재하지 않으면)
 if ! docker network inspect ${NETWORK_NAME} >/dev/null 2>&1; then
