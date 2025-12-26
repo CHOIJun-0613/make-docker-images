@@ -75,9 +75,10 @@ docker run -d \
   -e NEO4J_initial_dbms_default__database=${NEO4J_DATABASE} \
   -e NEO4J_dbms_security_procedures_unrestricted=apoc.* \
   -e NEO4J_dbms_security_procedures_allowlist=apoc.* \
-  -e NEO4J_dbms_memory_heap_initial__size=512m \
-  -e NEO4J_dbms_memory_heap_max__size=2G \
-  -e NEO4J_dbms_memory_pagecache_size=512m \
+  -e NEO4J_dbms_memory_heap_initial__size=1G \
+  -e NEO4J_dbms_memory_heap_max__size=4G \
+  -e NEO4J_dbms_memory_transaction_total_max=1.5G \
+  -e NEO4J_dbms_memory_pagecache_size=1G \
   -e NEO4J_dbms_connector_bolt_listen__address=0.0.0.0:7687 \
   -e NEO4J_dbms_connector_http_listen__address=0.0.0.0:7474 \
   -v ${VOLUME_DATA}:/data \
