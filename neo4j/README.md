@@ -27,6 +27,13 @@ Neo4j 5.x 그래프 데이터베이스 Docker 이미지 및 설정
 - **7474**: Neo4j Browser (HTTP) - 웹 UI 접속용
 - **7687**: Bolt Protocol - 애플리케이션 연결용
 
+## 공통 설정
+
+- `.env`: 저장소 루트에 위치하며 비밀번호, DB 이름과 같은 민감/환경별 값을 정의합니다. 존재하지 않으면 스크립트가 README에 명시된 기본값을 사용합니다.
+- `neo4j/common.conf`: Neo4j 스크립트 공통 변수(`CONTAINER_NAME`, `IMAGE_NAME`, `VOLUME_DATA`, `VOLUME_LOGS`, `NETWORK_NAME`, `NEO4J_*` 등)를 선언하고 `.env`를 자동으로 로드합니다.
+- `makerun.sh`, `dockerrun.sh`, `stop.sh`, `remove.sh`, `init-neo4j.sh` 등 모든 스크립트는 실행 시 `common.conf`를 자동으로 source 합니다. 동일한 변수를 재정의하려면 `.env` 또는 `common.conf`에서 값을 바꿔주세요.
+- 수동으로 Docker 명령을 실행할 때도 `source neo4j/common.conf`를 먼저 수행하면 동일한 변수들을 재사용할 수 있습니다.
+
 ## 빌드 및 실행
 
 ### 방법 1: 독립 실행 스크립트 (권장)
@@ -79,18 +86,22 @@ docker-compose down
 ```bash
 # 이미지 빌드
 cd neo4j
-docker build -t neo4j-custom:5 .
+docker build -t neo4j:5-community .
 
 # 컨테이너 실행
 docker run -d \
-  --name neo4j-standalone \
+  --name neo4j-db \
   -p 7474:7474 \
   -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/neo4j123 \
-  -e NEO4J_initial_dbms_default__database=csadb01 \
+  -e NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-neo4j123} \
+  -e NEO4J_initial_dbms_default__database=${NEO4J_DATABASE:-csadb01} \
+  -e NEO4J_dbms_memory_heap_initial__size=1G \
+  -e NEO4J_dbms_memory_heap_max__size=4G \
+  -e NEO4J_dbms_memory_transaction_total_max=1.5G \
+  -e NEO4J_dbms_memory_pagecache_size=1G \
   -v neo4j_data:/data \
   -v neo4j_logs:/logs \
-  neo4j-custom:5
+  neo4j:5-community
 ```
 
 ## 접속 방법
@@ -152,16 +163,17 @@ spring:
 - APOC (Awesome Procedures On Cypher) 플러그인이 활성화되어 있습니다
 - 다양한 유틸리티 함수 및 프로시저 사용 가능
 
-### 메모리 설정 (개발 환경 최적화)
-- Heap 초기 크기: 512MB
-- Heap 최대 크기: 2GB
-- Page Cache: 512MB
+### 메모리 설정 (개발 환경 권장치)
+- Heap 초기 크기: 1G (`NEO4J_dbms_memory_heap_initial__size`)
+- Heap 최대 크기: 4G (`NEO4J_dbms_memory_heap_max__size`)
+- 트랜잭션 메모리 한도: 1.5G (`NEO4J_dbms_memory_transaction_total_max`)
+- Page Cache: 1G (`NEO4J_dbms_memory_pagecache_size`)
 
 프로덕션 환경에서는 서버 사양에 맞게 조정하세요.
 
 ## 환경 변수
 
-`.env` 파일에서 다음 환경 변수를 설정할 수 있습니다:
+`.env` 또는 `neo4j/common.conf`에서 다음 환경 변수를 설정할 수 있습니다. `.env`에 값을 지정하면 `common.conf`에서 기본값보다 우선적으로 적용됩니다.
 
 ```env
 # Neo4j 관리자 비밀번호
@@ -173,6 +185,13 @@ NEO4J_DATABASE=csadb01
 # 애플리케이션 사용자
 NEO4J_USER=csauser
 NEO4J_USER_PASSWORD=csauser123
+
+# Docker 리소스 이름 (필요 시)
+CONTAINER_NAME=neo4j-db
+IMAGE_NAME=neo4j:5-community
+VOLUME_DATA=neo4j_data
+VOLUME_LOGS=neo4j_logs
+NETWORK_NAME=neo4j-network
 ```
 
 ## 데이터 영구 저장
