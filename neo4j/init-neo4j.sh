@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/common.conf"
+
 # Neo4j 초기화 스크립트
 # 컨테이너 최초 기동 시 Neo4j 엔트리포인트가 자동 실행한다.
 

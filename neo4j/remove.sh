@@ -4,10 +4,8 @@
 # Neo4j Docker 컨테이너 완전 삭제 스크립트
 # ====================================
 
-CONTAINER_NAME="neo4j-standalone"
-IMAGE_NAME="neo4j-custom:5"
-VOLUME_DATA="neo4j_data"
-VOLUME_LOGS="neo4j_logs"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/common.conf"
 
 echo "======================================"
 echo "Neo4j 컨테이너 완전 삭제"

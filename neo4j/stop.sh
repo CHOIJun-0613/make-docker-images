@@ -4,7 +4,8 @@
 # Neo4j Docker 컨테이너 중지 스크립트
 # ====================================
 
-CONTAINER_NAME="neo4j-standalone"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/common.conf"
 
 echo "======================================"
 echo "Neo4j 컨테이너 중지"

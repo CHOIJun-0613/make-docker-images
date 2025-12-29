@@ -9,25 +9,8 @@
 set -e
 
 # 변수 설정
-CONTAINER_NAME="neo4j-db"
-IMAGE_NAME="neo4j:5-community"
-NETWORK_NAME="neo4j-network"
-VOLUME_DATA="neo4j_data"
-VOLUME_LOGS="neo4j_logs"
-
-# .env 파일에서 환경 변수 로드 (프로젝트 루트에서)
-if [ -f ../.env ]; then
-  echo "Loading environment variables from ../.env"
-  export $(cat ../.env | grep -v '^#' | grep -v '^$' | xargs)
-else
-  echo "Warning: ../.env file not found. Using default values."
-fi
-
-# 환경 변수 기본값 설정
-NEO4J_PASSWORD=${NEO4J_PASSWORD:-neo4j123}
-NEO4J_DATABASE=${NEO4J_DATABASE:-csadb01}
-NEO4J_USER=${NEO4J_USER:-csauser}
-NEO4J_USER_PASSWORD=${NEO4J_USER_PASSWORD:-csauser123}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/common.conf"
 
 echo "======================================"
 echo "Neo4j Docker 컨테이너 설정"
