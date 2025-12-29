@@ -25,8 +25,9 @@ ENV NEO4J_dbms_connector_http_listen__address=0.0.0.0:7474
 # 7687 for Bolt (Neo4j Driver)
 EXPOSE 7474 7687
 
-# 초기화 스크립트 복사
-COPY init-neo4j.sh /docker-entrypoint-initdb.d/
+# 초기화 스크립트와 공통 설정을 이미지에 포함
+COPY init-neo4j.sh common.conf /docker-entrypoint-initdb.d/
+RUN chmod +x /docker-entrypoint-initdb.d/init-neo4j.sh
 
 # Set up volumes for data persistence
 VOLUME /data
