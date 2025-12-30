@@ -3,8 +3,9 @@
 # Set the base image - Neo4j 5.x
 FROM neo4j:5-community
 
-# 기본 데이터베이스를 csadb01로 설정
-ENV NEO4J_initial_dbms_default__database=csadb01
+# 기본 데이터베이스를 ${DATABASE_NAME}로 설정
+ARG DATABASE_NAME
+ENV NEO4J_initial_dbms_default__database=$DATABASE_NAME
 
 # APOC 플러그인 활성화 (선택사항이지만 유용함)
 ENV NEO4J_dbms_security_procedures_unrestricted=apoc.*
